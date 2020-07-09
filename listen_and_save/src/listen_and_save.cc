@@ -55,6 +55,8 @@ int main(int argc, char* argv[]) {
         cv::imwrite(path->value()+"/"+filename_string_stream.str()+".exr", depth_image);
         num_frame++;
     });
+    
+    ros::spin();
 
     return EXIT_SUCCESS;
 }
