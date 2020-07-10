@@ -11,5 +11,7 @@ Repository, that listenes to topic and saves as images to disk in .exr
 
 By default: 
     -t: /stereo/depth
+    
     -p: ""
+    
     -e: 32FC1
