@@ -10,6 +10,7 @@ Repository, that listenes to topic and saves as images to disk in .exr
 7. rosrun listen_and_save listen_and_save -t "name of topic" -p "path for saving images" -e "encoding"
 
 By default: 
+
     -t: /stereo/depth
     
     -p: ""
