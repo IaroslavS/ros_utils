@@ -1,6 +1,11 @@
 # listen_to_topic_and_save
 Repository, that listenes to topic and saves as images to disk in .exr
 
+# Requirements
+ROS, for example melodic
+opencv 3.3.1 or opencv 3.4.3
+
+# Installation
 1. Create folder "catkin_ws/src" somewhere
 2. Go the new created folder, into src folder
 3. git clone https://github.com/IaroslavS/listen_to_topic_and_save.git
