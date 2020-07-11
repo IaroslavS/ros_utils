@@ -17,10 +17,10 @@ opencv 3.3.1 or opencv 3.4.3
 
 By default: 
 
-    -t: /stereo/depth
-    
-    -p: ""
-    
-    -e: 32FC1
+-t: /stereo/depth
+
+-p: ""
+
+-e: 32FC1
 
 for path don't put symbol '/' after the last folder, otherwise there'll be error
