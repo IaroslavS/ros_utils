@@ -21,3 +21,5 @@ By default:
     -p: ""
     
     -e: 32FC1
+
+for path don't put symbol '/' after the last folder, or there'll be error
