@@ -3,6 +3,7 @@ Repository, that listenes to topic and saves as images to disk in .exr
 
 # Requirements
 ROS, for example melodic
+
 opencv 3.3.1 or opencv 3.4.3
 
 # Installation
