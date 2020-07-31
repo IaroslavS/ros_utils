@@ -93,6 +93,48 @@ class stereo_rectifier {
         cv::Mat undist_map_y_r_;
 };
 
+std::vector<double> convert_Mat_to_vector(cv::Mat mat) {
+    std::vector<double> array;
+    if (mat.isContinuous()) {
+       array.assign((double*)mat.data, (double*)mat.data + mat.total()*mat.channels());
+    } 
+    else {
+        for (int i = 0; i < mat.rows; ++i) {
+            array.insert(array.end(), mat.ptr<double>(i), mat.ptr<double>(i)+mat.cols*mat.channels());
+        }
+    }
+    return array;
+}
+
+void set_parameters_to_camera_info(sensor_msgs::CameraInfo& camera_info, const cv::Mat& K, const cv::Mat& R, const cv::Mat& D, 
+                                   const cv::Mat& K_rect) {
+    //setting intrinsics matrix K for left camera_info
+    for (auto i=0; i < 9; i++) {
+        camera_info.K[i] = convert_Mat_to_vector(K)[i];
+    }
+    //setting distortion and rotation matrix for left camera_info
+    camera_info.D = convert_Mat_to_vector(D);   
+    //setting rotation matrix for left camera_info
+    for (auto i=0; i <= 8; i++) {
+        camera_info.R[i] = convert_Mat_to_vector(R)[i];
+    }
+    //setting rectified intrinsics matrix for left
+    camera_info.P[0] = K_rect.at<float>(0,0);
+    camera_info.P[1] = K_rect.at<float>(0,1);
+    camera_info.P[2] = K_rect.at<float>(0,2);
+    camera_info.P[3] = K_rect.at<float>(0,3);
+    camera_info.P[4] = K_rect.at<float>(1,0);
+    camera_info.P[5] = K_rect.at<float>(1,1);
+    camera_info.P[6] = K_rect.at<float>(1,2);
+    camera_info.P[7] = K_rect.at<float>(1,3);
+    camera_info.P[8] = K_rect.at<float>(2,0);
+    camera_info.P[9] = K_rect.at<float>(2,1);
+    camera_info.P[10] = K_rect.at<float>(2,2);
+    camera_info.P[11] = 0;
+    camera_info.header.frame_id = "stereo";
+
+}
+
 void callback_rectify_and_publish(const sensor_msgs::ImageConstPtr& input_left_msg, const sensor_msgs::ImageConstPtr& input_right_msg, 
                                   image_transport::Publisher& publisher_left, image_transport::Publisher& publisher_right,
                                   ros::Publisher pub_info_left, ros::Publisher pub_info_right, sensor_msgs::CameraInfo info_left,
@@ -117,12 +159,15 @@ void callback_rectify_and_publish(const sensor_msgs::ImageConstPtr& input_left_m
     info_left.header.stamp = input_left_msg->header.stamp;
     info_right.header.stamp = input_right_msg->header.stamp;
 
+    cv::Size s = left_image_rectified.size();
+    info_left.height = s.height;
+    info_left.width = s.width;
+
     publisher_left.publish(rect_left_frame->toImageMsg());
     publisher_right.publish(rect_right_frame->toImageMsg());
 
     pub_info_left.publish(info_left);
     pub_info_right.publish(info_right);
-
 }
 
 int main(int argc, char* argv[]) {
@@ -150,14 +195,22 @@ int main(int argc, char* argv[]) {
         return EXIT_FAILURE;
     }
     const YAML::Node yaml_node = YAML::LoadFile(config_file_path->value());
+
     stereo_rectifier stereo_rectifier(yaml_node);
+
+    cv::Mat K_l, K_r, R_l, R_r, D_l, D_r, K_rect;
+    double focal_x_baseline;
+    stereo_rectifier.get_calib_matrixes(K_l, K_r, R_l, R_r, D_l, D_r, K_rect, focal_x_baseline);
+    sensor_msgs::CameraInfo info_left, info_right;
+    set_parameters_to_camera_info(info_left, K_l, R_l, D_l, K_rect);
+    set_parameters_to_camera_info(info_right, K_r, R_r, D_r, K_rect);
+
+
     // check validness of options
     if (help->is_set()) {
         std::cerr << op << std::endl;
         return EXIT_FAILURE;
     }
-
-    sensor_msgs::CameraInfo info_left, info_right;
 
     ros::NodeHandle nh;
 
