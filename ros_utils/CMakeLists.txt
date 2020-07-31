@@ -131,6 +131,7 @@ find_package(catkin REQUIRED COMPONENTS
         image_transport
         message_filters
         sensor_msgs)
+find_package(yaml-cpp REQUIRED)
 
 # thread library
 find_package(Threads REQUIRED)
@@ -170,10 +171,12 @@ catkin_package(CATKIN_DEPENDS
 
 include_directories(
         ${catkin_INCLUDE_DIRS}
-        ${Project_SRC_DIR})
+        ${Project_SRC_DIR}
+	${YAML_CPP_INCLUDEDIR})
 
 link_libraries(
         ${catkin_LIBRARIES}
-        ${Project_LIB})
+        ${Project_LIB}
+	${YAML_CPP_LIBRARIES})
 
 add_subdirectory(src)
