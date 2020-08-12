@@ -21,6 +21,8 @@
 
 using namespace std;
 
+extern int num_frame=0;
+
 class stereo_rectifier {
     public:
         //! Constructor
@@ -40,6 +42,7 @@ class stereo_rectifier {
             const auto fy = yaml_node["Camera.fy"].as<double>();
             const auto cx = yaml_node["Camera.cx"].as<double>();
             const auto cy = yaml_node["Camera.cy"].as<double>();
+            focal_x_baseline = yaml_node["Camera.focal_x_baseline"].as<double>();
             K_rect = (cv::Mat_<float>(3, 3) << fx, 0, cx, 0, fy, cy, 0, 0, 1);
             cv::initUndistortRectifyMap(K_l, D_l, R_l, K_rect, img_size, CV_32F, undist_map_x_l_, undist_map_y_l_);
             cv::initUndistortRectifyMap(K_r, D_r, R_r, K_rect, img_size, CV_32F, undist_map_x_r_, undist_map_y_r_);
@@ -107,22 +110,27 @@ std::vector<double> convert_Mat_to_vector(cv::Mat mat) {
 }
 
 void set_parameters_to_camera_info(sensor_msgs::CameraInfo& camera_info, const cv::Mat& K, const cv::Mat& R, const cv::Mat& D, 
-                                   const cv::Mat& K_rect) {
+                                   const cv::Mat& K_rect, const double& focal_x_baseline, const string& camera_position) {
     //setting intrinsics matrix K for left camera_info
     for (auto i=0; i < 9; i++) {
-        camera_info.K[i] = convert_Mat_to_vector(K)[i];
+        camera_info.K[i] = 0;
     }
     //setting distortion and rotation matrix for left camera_info
-    camera_info.D = convert_Mat_to_vector(D);   
+    //camera_info.D = convert_Mat_to_vector(D);   
     //setting rotation matrix for left camera_info
-    for (auto i=0; i <= 8; i++) {
-        camera_info.R[i] = convert_Mat_to_vector(R)[i];
+    for (auto i=0; i < 9; i++) {
+        camera_info.R[i] = 0;
     }
     //setting rectified intrinsics matrix for left
     camera_info.P[0] = K_rect.at<float>(0,0);
     camera_info.P[1] = K_rect.at<float>(0,1);
     camera_info.P[2] = K_rect.at<float>(0,2);
-    camera_info.P[3] = K_rect.at<float>(0,3);
+    if (camera_position == "left") {
+        camera_info.P[3] = 0;
+    }
+    else {
+        camera_info.P[3] = -focal_x_baseline;
+    }
     camera_info.P[4] = K_rect.at<float>(1,0);
     camera_info.P[5] = K_rect.at<float>(1,1);
     camera_info.P[6] = K_rect.at<float>(1,2);
@@ -168,6 +176,18 @@ void callback_rectify_and_publish(const sensor_msgs::ImageConstPtr& input_left_m
 
     pub_info_left.publish(info_left);
     pub_info_right.publish(info_right);
+
+    std::stringstream filename_string_stream;
+    filename_string_stream << std::setfill('0') << std::setw(6) << num_frame;
+    cv::imwrite("/media/cds-s/data/Datasets/Husky-NKBVS/00_map_half_2020-03-17-14-21-57/stereo_images_from_rosnode/image_0/"+filename_string_stream.str()+".png", left_image_rectified);
+    cv::imwrite("/media/cds-s/data/Datasets/Husky-NKBVS/00_map_half_2020-03-17-14-21-57/stereo_images_from_rosnode/image_1/"+filename_string_stream.str()+".png", right_image_rectified);
+    num_frame++;
+
+    const double timestamp = input_left_msg->header.stamp.sec + input_left_msg->header.stamp.nsec/1000000000.0; 
+    FILE *file_timestamps;
+    file_timestamps = fopen(("/media/cds-s/data/Datasets/Husky-NKBVS/00_map_half_2020-03-17-14-21-57/stereo_images_from_rosnode/timestamps.txt"),"a");
+    fprintf (file_timestamps, "%f\n", timestamp);
+    fclose (file_timestamps);
 }
 
 int main(int argc, char* argv[]) {
@@ -202,8 +222,8 @@ int main(int argc, char* argv[]) {
     double focal_x_baseline;
     stereo_rectifier.get_calib_matrixes(K_l, K_r, R_l, R_r, D_l, D_r, K_rect, focal_x_baseline);
     sensor_msgs::CameraInfo info_left, info_right;
-    set_parameters_to_camera_info(info_left, K_l, R_l, D_l, K_rect);
-    set_parameters_to_camera_info(info_right, K_r, R_r, D_r, K_rect);
+    set_parameters_to_camera_info(info_left, K_l, R_l, D_l, K_rect, focal_x_baseline, "left");
+    set_parameters_to_camera_info(info_right, K_r, R_r, D_r, K_rect, focal_x_baseline, "right");
 
 
     // check validness of options
@@ -229,9 +249,11 @@ int main(int argc, char* argv[]) {
     MySyncPolicy sync_policy(10);
     message_filters::Synchronizer<MySyncPolicy> sync_stereo(static_cast<const MySyncPolicy>(sync_policy), image_left_sub, image_right_sub);
     
+    FILE* file_timestamps;    
+    file_timestamps = fopen(("/media/cds-s/data/Datasets/Husky-NKBVS/00_map_half_2020-03-17-14-21-57/stereo_images_from_rosnode/timestamps.txt"),"w");
+    fclose (file_timestamps);
     sync_stereo.registerCallback(boost::bind(&callback_rectify_and_publish, _1, _2, publisher_left, publisher_right, pub_info_left, pub_info_right, info_left, info_right, stereo_rectifier));
     
     ros::spin();
-
     return EXIT_SUCCESS;
 }

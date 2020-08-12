@@ -1,6 +1,8 @@
 #include <iostream>
 #include <chrono>
 #include <numeric>
+#include <string>
+
 
 #include <ros/ros.h>
 #include <image_transport/image_transport.h>
@@ -17,6 +19,8 @@
 #include <popl.hpp>
 
 using namespace std;
+
+extern int num_frame=0;
 
 int main(int argc, char* argv[]) {
 
@@ -47,15 +51,23 @@ int main(int argc, char* argv[]) {
     int num_frame = 0;
     ros::NodeHandle nh;
     image_transport::ImageTransport it(nh);
-    
+    FILE *file_timestamps;
+    //if (path->value()[size(path->value())] == '/')
+    //    path->value() = path->value() + "/";
+    file_timestamps = fopen((path->value()+ "/timestamps_depth.txt").c_str(),"w");
+    fclose (file_timestamps);
     image_transport::Subscriber sub = it.subscribe(topic->value(), 1, [&](const sensor_msgs::ImageConstPtr& msg) {
+        file_timestamps = fopen((path->value()+"/timestamps_depth.txt").c_str(),"a");
         cv::Mat depth_image = cv_bridge::toCvShare(msg, encoding->value())->image;
         std::stringstream filename_string_stream;
         filename_string_stream << std::setfill('0') << std::setw(6) << num_frame;
-        cv::imwrite(path->value()+"/"+filename_string_stream.str()+".exr", depth_image);
+        cv::imwrite(path->value()+"/images/"+filename_string_stream.str()+".exr", depth_image);
+        const double timestamp = msg->header.stamp.sec + msg->header.stamp.nsec/1000000000.0; 
+        fprintf (file_timestamps, "%f\n", timestamp);
         num_frame++;
+        fclose(file_timestamps);
     });
-    
+        
     ros::spin();
 
     return EXIT_SUCCESS;
