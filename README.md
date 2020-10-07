@@ -13,7 +13,7 @@ opencv 3.3.1 or opencv 3.4.3
 4. cd ..
 5. catkin_make
 6. source devel/setup.bash
-7. rosrun listen_and_save listen_and_save -t "name of topic" -p "path for saving images" -e "encoding"
+7. rosrun ros_utils listen_and_save -t "name of topic" -p "path for saving images" -e "encoding"
 
 By default: 
 
