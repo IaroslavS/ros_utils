@@ -1,0 +1,19 @@
+<launch>
+    <!-- Launch settings -->
+    <arg name="ns" default="stereo"/>
+    <arg name="left_topic" default="/stereo/left/image_raw"/>
+    <arg name="right_topic" default="/stereo/right/image_raw"/>
+    <arg name="encoding" default="bgr8"/>
+    <arg name="file_config"/>
+    <arg name="output_path_left_image_rect" default=""/>
+
+    <group ns="$(arg ns)">
+        <node name="rectify_and_publish" pkg="ros_utils" type="rectify_and_publish.py" output="screen">
+            <param name="left_topic" value="$(arg left_topic)"/>
+            <param name="right_topic" value="$(arg right_topic)"/>
+            <param name="file_config" value="$(arg file_config)"/>
+            <param name="encoding" value="$(arg encoding)"/>
+	    <param name="output_path_left_image_rect" value="$(arg output_path_left_image_rect)"/>
+        </node>
+    </group>
+</launch>
