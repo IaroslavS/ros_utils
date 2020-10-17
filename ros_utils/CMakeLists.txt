@@ -28,7 +28,7 @@ list(APPEND CMAKE_MODULE_PATH ${Project_ROOT}/cmake)
 ##################
 
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
-    set(CMAKE_BUILD_TYPE "Release")
+    set(CMAKE_BUILD_TYPE "Debug")
     set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
 endif()
 
@@ -130,7 +130,8 @@ find_package(catkin REQUIRED COMPONENTS
         cv_bridge
         image_transport
         message_filters
-        sensor_msgs)
+        sensor_msgs
+        image_geometry)
 find_package(yaml-cpp REQUIRED)
 
 # thread library
@@ -155,6 +156,10 @@ include_directories(${popl_INCLUDE_DIR})
 set(json_INCLUDE_DIR ${Project_ROOT}/3rd/json/include)
 include_directories(${json_INCLUDE_DIR})
 
+# common include folder
+set(common_include_folder ${Project_ROOT}/include)
+include_directories(${common_include_folder})
+
 #################################
 # catkin specific configuration #
 #################################
@@ -163,7 +168,8 @@ catkin_package(CATKIN_DEPENDS
         cv_bridge
         image_transport
         sensor_msgs
-        message_filters)
+        message_filters
+        image_geometry)
 
 #########
 # Build #
@@ -172,7 +178,8 @@ catkin_package(CATKIN_DEPENDS
 include_directories(
         ${catkin_INCLUDE_DIRS}
         ${Project_SRC_DIR}
-	${YAML_CPP_INCLUDEDIR})
+	    ${YAML_CPP_INCLUDEDIR}
+        ${common_include_folder})
 
 link_libraries(
         ${catkin_LIBRARIES}

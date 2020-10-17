@@ -2,7 +2,7 @@
 <package format="2">
     <name>ros_utils</name>
     <version>0.0.0</version>
-    <description>The ROS package for the project "listen_and_save"</description>
+    <description>The ROS package for the project "ros_utils"</description>
 
     <maintainer email="solomentsev.yak@phystech.edu">Yaroslav Solomentsev</maintainer>
 
@@ -15,17 +15,20 @@
     <build_depend>message_filters</build_depend>
     <build_depend>sensor_msgs</build_depend>
     <build_depend>yaml-cpp</build_depend>
+    <build_depend>image_geometry</build_depend>
 
     <build_export_depend>image_transport</build_export_depend>
     <build_export_depend>cv_bridge</build_export_depend>
     <build_export_depend>message_filters</build_export_depend>
     <build_export_depend>sensor_msgs</build_export_depend>
-    <build_export_depend>yaml-cpp</build_export_depend>	
+    <build_export_depend>yaml-cpp</build_export_depend>
+    <build_export_depend>image_geometry</build_export_depend>	
 
     <exec_depend>image_transport</exec_depend>
     <exec_depend>cv_bridge</exec_depend>
     <exec_depend>message_filters</exec_depend>
     <exec_depend>sensor_msgs</exec_depend>
     <exec_depend>yaml-cpp</exec_depend>
+    <exec_depend>image_geometry</exec_depend>
 
 </package>

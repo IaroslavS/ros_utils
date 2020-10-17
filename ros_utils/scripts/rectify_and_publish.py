@@ -17,7 +17,7 @@ class StereoRectifier:
     #----------------------------------Initialization-------------------------------------
     def __init__(self, config_filename):
         with open(config_filename, 'r') as f:
-            config_cameras = yaml.load(f)
+            config_cameras = yaml.load(f, Loader=yaml.FullLoader)
         
         fx = config_cameras['left']['intrinsics'][0]
         fy = config_cameras['left']['intrinsics'][1]
@@ -87,12 +87,14 @@ class ImagePublisher:
                  camera_topic_left,
                  camera_topic_right,
                  encoding,
-                 queue):
+                 queue,
+                 output_format):
         self.image_pub_left = rospy.Publisher(output_topic_left, Image, queue_size=queue)
         self.image_pub_right = rospy.Publisher(output_topic_right, Image, queue_size=queue)
         self.camera_pub_left = rospy.Publisher(camera_topic_left, CameraInfo, queue_size=queue)
         self.camera_pub_right = rospy.Publisher(camera_topic_right, CameraInfo, queue_size=queue)
         self.encoding = encoding
+        self.output_format = output_format
 
         self.Rectifier = StereoRectifier(filename_config)
         self.header = Header(frame_id='stereo')
@@ -109,15 +111,16 @@ class ImagePublisher:
 
     def rectify_and_publish(self, left_message, right_message):
         self.header.stamp = left_message.header.stamp
-
         left_image_raw = bridge.imgmsg_to_cv2(left_message, desired_encoding=self.encoding)
         right_image_raw = bridge.imgmsg_to_cv2(right_message, desired_encoding=self.encoding)
 
         left_image_rectified = self.Rectifier.rectify_left_image(left_image_raw)
         right_image_rectified = self.Rectifier.rectify_right_image(right_image_raw)
-        
-        output_left_message = bridge.cv2_to_imgmsg(left_image_rectified, self.encoding)
-        output_right_message = bridge.cv2_to_imgmsg(right_image_rectified, self.encoding)
+        if self.output_format == 'mono8' and self.encoding == 'bgr8':
+            left_image_rectified = cv2.cvtColor(left_image_rectified, cv2.COLOR_BGR2GRAY)
+            right_image_rectified = cv2.cvtColor(right_image_rectified, cv2.COLOR_BGR2GRAY)
+        output_left_message = bridge.cv2_to_imgmsg(left_image_rectified, self.output_format)
+        output_right_message = bridge.cv2_to_imgmsg(right_image_rectified, self.output_format)
         output_left_message.header = self.header
         output_right_message.header = self.header
         
@@ -156,15 +159,17 @@ def publisher():
     encoding = rospy.get_param('~encoding', 'bgr8')
     filename_config = rospy.get_param('~file_config')
     output_path = rospy.get_param('~output_path_left_image_rect', '')
+    output_format = rospy.get_param('~output_format', 'mono8')
 
     if output_path != '':
         timestamps_file = open(os.path.join(output_path,'timestamps.txt'), 'w')
         timestamps_file.close()
-    if os.path.exists(os.path.join(output_path,'images')):
-        shutil.rmtree(os.path.join(output_path,'images'))
-        os.makedirs(os.path.join(output_path,'images'))
+        if os.path.exists(os.path.join(output_path,'images')):
+            shutil.rmtree(os.path.join(output_path,'images'))
+            os.makedirs(os.path.join(output_path,'images'))
 
-    image_publisher = ImagePublisher(filename_config, '/stereo/left/image_rect', '/stereo/right/image_rect', '/stereo/left/camera_info', '/stereo/right/camera_info', encoding, queue)
+    image_publisher = ImagePublisher(filename_config, '/stereo/left/image_rect', '/stereo/right/image_rect', \
+                                    '/stereo/left/camera_info', '/stereo/right/camera_info', encoding, queue, output_format)
     bridge = CvBridge()
 
     topic_list = [message_filters.Subscriber(left_topic, Image), message_filters.Subscriber(right_topic, Image)]

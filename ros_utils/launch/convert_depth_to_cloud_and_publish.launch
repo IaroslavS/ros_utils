@@ -1,0 +1,13 @@
+<launch>
+    <!-- Launch settings -->
+    <arg name="ns" default="stereo"/>
+    <arg name="depth_topic" default="/stereo/esgm"/>
+    <arg name="encoding" default="32FC1"/>
+
+    <group ns="$(arg ns)">
+        <node name="rectify_and_publish" pkg="ros_utils" type="convert_depth_to_cloud_and_publish.py" output="screen">
+            <param name="depth_topic" value="$(arg depth_topic)"/>
+            <param name="encoding" value="$(arg encoding)"/>
+        </node>
+    </group>
+</launch>
