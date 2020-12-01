@@ -135,6 +135,9 @@ class ImagePublisher:
         self.right_camera_info.width = self.Rectifier.get_output_shape()[1]
         self.camera_pub_left.publish(self.left_camera_info)
         self.camera_pub_right.publish(self.right_camera_info)
+        # print("time of rectification = "+str(rospy.get_rostime().secs - 1603273847 + rospy.get_rostime().nsecs/1000000000.0))
+        # print("nsecs Time above for ts nsec "+str(self.header.stamp.nsecs/1000000000.0))
+        # print ""
         if output_path != '':
             cv2.imwrite(os.path.join(output_path,'images',str(left_message.header.seq).zfill(8)+'.png'), left_image_rectified)
             timestamps_file = open(os.path.join(output_path,'timestamps.txt'), 'a')

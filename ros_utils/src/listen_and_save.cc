@@ -60,8 +60,8 @@ int main(int argc, char* argv[]) {
     file_timestamps = fopen((path->value()+ "/timestamps_depth.txt").c_str(),"w");
     fclose (file_timestamps);
     image_transport::Subscriber sub = it.subscribe(topic->value(), 1, [&](const sensor_msgs::ImageConstPtr& msg) {
-        // std::cout << ros::Time::now().toSec() << std::endl;
-        // std::cout << "Time above is for frame id " << msg->header.frame_id << std::endl;
+        // std::cout << ros::Time::now().toSec() - 1603273847.0 << std::endl;
+        // std::cout << "Time above is for ts " << msg->header.stamp.nsec/1000000000.0 << std::endl << std::endl;
         file_timestamps = fopen((path_string+"/timestamps_depth.txt").c_str(),"a");
         cv::Mat depth_image = cv_bridge::toCvShare(msg, encoding->value())->image;
         std::stringstream filename_string_stream;
