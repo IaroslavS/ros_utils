@@ -138,7 +138,7 @@ find_package(yaml-cpp REQUIRED)
 find_package(Threads REQUIRED)
 
 # OpenCV
-find_package(OpenCV 3.3.1 QUIET)
+find_package(OpenCV 3.2.0 QUIET)
 if(NOT OpenCV_FOUND)
     find_package(OpenCV 4.0)
     if(NOT OpenCV_FOUND)
