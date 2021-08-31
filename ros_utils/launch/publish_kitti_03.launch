@@ -1,0 +1,23 @@
+<launch>
+    <!-- Launch settings -->
+    <arg name="ns" default="stereo"/>
+    <arg name="rate" default="5"/>
+    <arg name="fname_left" default="/media/cds-s/data/Datasets/KITTI_Odometry/dataset/sequences/03/image_0/*"/>
+    <arg name="fname_right" default="/media/cds-s/data/Datasets/KITTI_Odometry/dataset/sequences/03/image_1/*"/>
+    <arg name="fname_disp" default="$(find stereo_test)/data/kitti/disparity/*"/>
+    <arg name="encoding" default="mono8"/>
+    <arg name="disparity" default="false"/>
+
+    <group ns="$(arg ns)">
+        <node name="image_publisher" pkg="stereo_test" type="publish_images.py" output="screen">
+            <param name="rate" value="$(arg rate)"/>
+            <param name="fname_left" value="$(arg fname_left)"/>
+            <param name="fname_right" value="$(arg fname_right)"/>
+            <param name="fname_disp" value="" unless="$(arg disparity)"/>
+            <param name="fname_disp" value="$(arg fname_disp)" if="$(arg disparity)"/>
+            <param name="encoding" value="$(arg encoding)"/>
+            <rosparam param="pmat_l">[7.215377000000e+02, 0.000000000000e+00, 6.095593000000e+02, 0.000000000000e+00, 0.000000000000e+00, 7.215377000000e+02, 1.728540000000e+02, 0.000000000000e+00, 0.000000000000e+00, 0.000000000000e+00, 1.000000000000e+00, 0.000000000000e+00]</rosparam>
+            <rosparam param="pmat_r">[7.215377000000e+02, 0.000000000000e+00, 6.095593000000e+02, -3.875744000000e+02, 0.000000000000e+00, 7.215377000000e+02, 1.728540000000e+02, 0.000000000000e+00, 0.000000000000e+00, 0.000000000000e+00, 1.000000000000e+00, 0.000000000000e+00]</rosparam>
+        </node>
+    </group>
+</launch>

@@ -1,0 +1,10 @@
+<launch>
+    <!-- Launch settings -->
+    <arg name="ns" default="stereo"/>
+
+    <group ns="$(arg ns)">
+        <node name="saving_poses_ros" pkg="ros_utils" type="save_poses.py" output="screen">
+            <param name="rate" value="$(arg rate)"/>
+        </node>
+    </group>
+</launch>

@@ -1,0 +1,15 @@
+<launch>
+
+    <arg name="ns" default="stereo"/>
+    <arg name="encoding" default="8UC1"/>
+    <arg name="path"/>
+    <arg name="topic" default="/stereo/left/segmentation"/>
+
+    <group ns="$(arg ns)">
+        <node name="listen_and_save" pkg="ros_utils" type="listen_and_save_launch" output="screen">
+            <param name="encoding" value="$(arg encoding)"/>
+            <param name="path" value="$(arg path)"/>
+	    <param name="topic" value="$(arg topic)"/>
+        </node>
+    </group>
+</launch>

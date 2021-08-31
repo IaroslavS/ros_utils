@@ -1,7 +1,7 @@
 set(EXECUTABLE_TARGETS "")
 
-add_executable(listen_and_save listen_and_save.cc)
-list(APPEND EXECUTABLE_TARGETS listen_and_save)
+add_executable(listen_and_save_launch listen_and_save_launch.cc)
+list(APPEND EXECUTABLE_TARGETS listen_and_save_launch)
 
 add_executable(depth_to_cloud depth_to_cloud.cc)
 list(APPEND EXECUTABLE_TARGETS depth_to_cloud)

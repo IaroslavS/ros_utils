@@ -1,0 +1,175 @@
+<?xml version="1.0"?>
+<launch>
+
+    <arg name="ns" default="stereo"/>
+  
+<!--_____________________________________listen to topic and save node_____________________________-->
+    <arg name="encoding_depth" default="32FC1"/>
+    <arg name="output_path"/>
+    <arg name="topic" default="/stereo/depth"/>
+
+    <group ns="$(arg ns)">
+        <node name="listen_and_save" pkg="ros_utils" type="listen_and_save_launch" output="screen">
+            <param name="encoding" value="$(arg encoding_depth)"/>
+            <param name="path" value="$(arg output_path)"/>
+	    <param name="topic" value="$(arg topic)"/>
+        </node>
+    </group>
+<!--___________________________________________end of node___________________________________________-->
+
+<!--____________________________________________ public images node_______________________________-->
+
+
+    <arg name="rate" default="1"/>
+    <arg name="fname_left" default="/media/cds-s/data/Datasets/KITTI_Odometry/dataset/sequences/00/image_0/*"/>
+    <arg name="fname_right" default="/media/cds-s/data/Datasets/KITTI_Odometry/dataset/sequences/00/image_1/*"/>
+    <arg name="fname_disp" default="/media/cds-s/data/Datasets/KITTI_Odometry/dataset/sequences/00/disparity/*"/>
+    <arg name="encoding" default="mono8"/>
+    <arg name="disparity" default="false"/>
+    <arg name="sequence_number"/>
+
+    <group ns="$(arg ns)">
+        <node name="image_publisher" pkg="ros_utils" type="publish_images.py" output="screen" if="$(eval sequence_number == 0)" required="true">
+            <param name="rate" value="$(arg rate)"/>
+            <param name="fname_left" value="$(arg fname_left)"/>
+            <param name="fname_right" value="$(arg fname_right)"/>
+            <param name="fname_disp" value="" unless="$(arg disparity)"/>
+            <param name="fname_disp" value="$(arg fname_disp)" if="$(arg disparity)"/>
+            <param name="encoding" value="$(arg encoding)"/>
+            <rosparam param="pmat_l">[7.188560000000e+02, 0.000000000000e+00, 6.071928000000e+02, 0.000000000000e+00, 0.000000000000e+00, 7.188560000000e+02, 1.852157000000e+02, 0.000000000000e+00, 0.000000000000e+00, 0.000000000000e+00, 1.000000000000e+00, 0.000000000000e+00]</rosparam>
+            <rosparam param="pmat_r">[7.188560000000e+02, 0.000000000000e+00, 6.071928000000e+02, -3.861448000000e+02, 0.000000000000e+00, 7.188560000000e+02, 1.852157000000e+02, 0.000000000000e+00, 0.000000000000e+00, 0.000000000000e+00, 1.000000000000e+00, 0.000000000000e+00]</rosparam>
+        </node>
+    </group>
+    
+    <group ns="$(arg ns)">
+        <node name="image_publisher" pkg="ros_utils" type="publish_images.py" output="screen" if="$(eval sequence_number == 1)" required="true">
+            <param name="rate" value="$(arg rate)"/>
+            <param name="fname_left" value="$(arg fname_left)"/>
+            <param name="fname_right" value="$(arg fname_right)"/>
+            <param name="fname_disp" value="" unless="$(arg disparity)"/>
+            <param name="fname_disp" value="$(arg fname_disp)" if="$(arg disparity)"/>
+            <param name="encoding" value="$(arg encoding)"/>
+            <rosparam param="pmat_l">[7.188560000000e+02, 0.000000000000e+00, 6.071928000000e+02, 0.000000000000e+00, 0.000000000000e+00, 7.188560000000e+02, 1.852157000000e+02, 0.000000000000e+00, 0.000000000000e+00, 0.000000000000e+00, 1.000000000000e+00, 0.000000000000e+00]</rosparam>
+            <rosparam param="pmat_r">[7.188560000000e+02, 0.000000000000e+00, 6.071928000000e+02, -3.861448000000e+02, 0.000000000000e+00, 7.188560000000e+02, 1.852157000000e+02, 0.000000000000e+00, 0.000000000000e+00, 0.000000000000e+00, 1.000000000000e+00, 0.000000000000e+00]</rosparam>
+        </node>
+    </group>
+    
+    <group ns="$(arg ns)">
+        <node name="image_publisher" pkg="ros_utils" type="publish_images.py" output="screen" if="$(eval sequence_number == 2)" required="true">
+            <param name="rate" value="$(arg rate)"/>
+            <param name="fname_left" value="$(arg fname_left)"/>
+            <param name="fname_right" value="$(arg fname_right)"/>
+            <param name="fname_disp" value="" unless="$(arg disparity)"/>
+            <param name="fname_disp" value="$(arg fname_disp)" if="$(arg disparity)"/>
+            <param name="encoding" value="$(arg encoding)"/>
+            <rosparam param="pmat_l">[7.188560000000e+02, 0.000000000000e+00, 6.071928000000e+02, 0.000000000000e+00, 0.000000000000e+00, 7.188560000000e+02, 1.852157000000e+02, 0.000000000000e+00, 0.000000000000e+00, 0.000000000000e+00, 1.000000000000e+00, 0.000000000000e+00]</rosparam>
+            <rosparam param="pmat_r">[7.188560000000e+02, 0.000000000000e+00, 6.071928000000e+02, -3.861448000000e+02, 0.000000000000e+00, 7.188560000000e+02, 1.852157000000e+02, 0.000000000000e+00, 0.000000000000e+00, 0.000000000000e+00, 1.000000000000e+00, 0.000000000000e+00]</rosparam>
+        </node>
+    </group>
+    
+    <group ns="$(arg ns)">
+        <node name="image_publisher" pkg="ros_utils" type="publish_images.py" output="screen" if="$(eval sequence_number == 3)" required="true">
+            <param name="rate" value="$(arg rate)"/>
+            <param name="fname_left" value="$(arg fname_left)"/>
+            <param name="fname_right" value="$(arg fname_right)"/>
+            <param name="fname_disp" value="" unless="$(arg disparity)"/>
+            <param name="fname_disp" value="$(arg fname_disp)" if="$(arg disparity)"/>
+            <param name="encoding" value="$(arg encoding)"/>
+            <rosparam param="pmat_l">[7.215377000000e+02, 0.000000000000e+00, 6.095593000000e+02, 0.000000000000e+00, 0.000000000000e+00, 7.215377000000e+02, 1.728540000000e+02, 0.000000000000e+00, 0.000000000000e+00, 0.000000000000e+00, 1.000000000000e+00, 0.000000000000e+00]</rosparam>
+            <rosparam param="pmat_r">[7.215377000000e+02, 0.000000000000e+00, 6.095593000000e+02, -3.875744000000e+02, 0.000000000000e+00, 7.215377000000e+02, 1.728540000000e+02, 0.000000000000e+00, 0.000000000000e+00, 0.000000000000e+00, 1.000000000000e+00, 0.000000000000e+00]</rosparam>
+        </node>
+    </group>
+    
+    <group ns="$(arg ns)">
+        <node name="image_publisher" pkg="ros_utils" type="publish_images.py" output="screen" if="$(eval sequence_number == 4)" required="true">
+            <param name="rate" value="$(arg rate)"/>
+            <param name="fname_left" value="$(arg fname_left)"/>
+            <param name="fname_right" value="$(arg fname_right)"/>
+            <param name="fname_disp" value="" unless="$(arg disparity)"/>
+            <param name="fname_disp" value="$(arg fname_disp)" if="$(arg disparity)"/>
+            <param name="encoding" value="$(arg encoding)"/>
+            <rosparam param="pmat_l">[7.070912000000e+02, 0.000000000000e+00, 6.018873000000e+02, 0.000000000000e+00, 0.000000000000e+00, 7.070912000000e+02, 1.831104000000e+02, 0.000000000000e+00, 0.000000000000e+00, 0.000000000000e+00, 1.000000000000e+00, 0.000000000000e+00]</rosparam>
+            <rosparam param="pmat_r">[7.070912000000e+02, 0.000000000000e+00, 6.018873000000e+02, -3.798145000000e+02, 0.000000000000e+00, 7.070912000000e+02, 1.831104000000e+02, 0.000000000000e+00, 0.000000000000e+00, 0.000000000000e+00, 1.000000000000e+00, 0.000000000000e+00]</rosparam>
+        </node>
+    </group>
+    
+    <group ns="$(arg ns)">
+        <node name="image_publisher" pkg="ros_utils" type="publish_images.py" output="screen" if="$(eval sequence_number == 5)" required="true">
+            <param name="rate" value="$(arg rate)"/>
+            <param name="fname_left" value="$(arg fname_left)"/>
+            <param name="fname_right" value="$(arg fname_right)"/>
+            <param name="fname_disp" value="" unless="$(arg disparity)"/>
+            <param name="fname_disp" value="$(arg fname_disp)" if="$(arg disparity)"/>
+            <param name="encoding" value="$(arg encoding)"/>
+            <rosparam param="pmat_l">[7.070912000000e+02, 0.000000000000e+00, 6.018873000000e+02, 0.000000000000e+00, 0.000000000000e+00, 7.070912000000e+02, 1.831104000000e+02, 0.000000000000e+00, 0.000000000000e+00, 0.000000000000e+00, 1.000000000000e+00, 0.000000000000e+00]</rosparam>
+            <rosparam param="pmat_r">[7.070912000000e+02, 0.000000000000e+00, 6.018873000000e+02, -3.798145000000e+02, 0.000000000000e+00, 7.070912000000e+02, 1.831104000000e+02, 0.000000000000e+00, 0.000000000000e+00, 0.000000000000e+00, 1.000000000000e+00, 0.000000000000e+00]</rosparam>
+        </node>
+    </group>
+
+    <group ns="$(arg ns)">
+        <node name="image_publisher" pkg="ros_utils" type="publish_images.py" output="screen" if="$(eval sequence_number == 6)" required="true">
+            <param name="rate" value="$(arg rate)"/>
+            <param name="fname_left" value="$(arg fname_left)"/>
+            <param name="fname_right" value="$(arg fname_right)"/>
+            <param name="fname_disp" value="" unless="$(arg disparity)"/>
+            <param name="fname_disp" value="$(arg fname_disp)" if="$(arg disparity)"/>
+            <param name="encoding" value="$(arg encoding)"/>
+            <rosparam param="pmat_l">[7.070912000000e+02, 0.000000000000e+00, 6.018873000000e+02, 0.000000000000e+00, 0.000000000000e+00, 7.070912000000e+02, 1.831104000000e+02, 0.000000000000e+00, 0.000000000000e+00, 0.000000000000e+00, 1.000000000000e+00, 0.000000000000e+00]</rosparam>
+            <rosparam param="pmat_r">[7.070912000000e+02, 0.000000000000e+00, 6.018873000000e+02, -3.798145000000e+02, 0.000000000000e+00, 7.070912000000e+02, 1.831104000000e+02, 0.000000000000e+00, 0.000000000000e+00, 0.000000000000e+00, 1.000000000000e+00, 0.000000000000e+00]</rosparam>
+        </node>
+    </group> 
+    
+    <group ns="$(arg ns)">
+        <node name="image_publisher" pkg="ros_utils" type="publish_images.py" output="screen" if="$(eval sequence_number == 7)" required="true">
+            <param name="rate" value="$(arg rate)"/>
+            <param name="fname_left" value="$(arg fname_left)"/>
+            <param name="fname_right" value="$(arg fname_right)"/>
+            <param name="fname_disp" value="" unless="$(arg disparity)"/>
+            <param name="fname_disp" value="$(arg fname_disp)" if="$(arg disparity)"/>
+            <param name="encoding" value="$(arg encoding)"/>
+            <rosparam param="pmat_l">[7.070912000000e+02, 0.000000000000e+00, 6.018873000000e+02, 0.000000000000e+00, 0.000000000000e+00, 7.070912000000e+02, 1.831104000000e+02, 0.000000000000e+00, 0.000000000000e+00, 0.000000000000e+00, 1.000000000000e+00, 0.000000000000e+00]</rosparam>
+            <rosparam param="pmat_r">[7.070912000000e+02, 0.000000000000e+00, 6.018873000000e+02, -3.798145000000e+02, 0.000000000000e+00, 7.070912000000e+02, 1.831104000000e+02, 0.000000000000e+00, 0.000000000000e+00, 0.000000000000e+00, 1.000000000000e+00, 0.000000000000e+00]</rosparam>
+        </node>
+    </group>
+    
+    <group ns="$(arg ns)">
+        <node name="image_publisher" pkg="ros_utils" type="publish_images.py" output="screen" if="$(eval sequence_number == 8)" required="true">
+            <param name="rate" value="$(arg rate)"/>
+            <param name="fname_left" value="$(arg fname_left)"/>
+            <param name="fname_right" value="$(arg fname_right)"/>
+            <param name="fname_disp" value="" unless="$(arg disparity)"/>
+            <param name="fname_disp" value="$(arg fname_disp)" if="$(arg disparity)"/>
+            <param name="encoding" value="$(arg encoding)"/>
+            <rosparam param="pmat_l">[7.070912000000e+02, 0.000000000000e+00, 6.018873000000e+02, 0.000000000000e+00, 0.000000000000e+00, 7.070912000000e+02, 1.831104000000e+02, 0.000000000000e+00, 0.000000000000e+00, 0.000000000000e+00, 1.000000000000e+00, 0.000000000000e+00]</rosparam>
+            <rosparam param="pmat_r">[7.070912000000e+02, 0.000000000000e+00, 6.018873000000e+02, -3.798145000000e+02, 0.000000000000e+00, 7.070912000000e+02, 1.831104000000e+02, 0.000000000000e+00, 0.000000000000e+00, 0.000000000000e+00, 1.000000000000e+00, 0.000000000000e+00]</rosparam>
+        </node>
+    </group>
+    
+    <group ns="$(arg ns)">
+        <node name="image_publisher" pkg="ros_utils" type="publish_images.py" output="screen" if="$(eval sequence_number == 9)" required="true">
+            <param name="rate" value="$(arg rate)"/>
+            <param name="fname_left" value="$(arg fname_left)"/>
+            <param name="fname_right" value="$(arg fname_right)"/>
+            <param name="fname_disp" value="" unless="$(arg disparity)"/>
+            <param name="fname_disp" value="$(arg fname_disp)" if="$(arg disparity)"/>
+            <param name="encoding" value="$(arg encoding)"/>
+            <rosparam param="pmat_l">[7.070912000000e+02, 0.000000000000e+00, 6.018873000000e+02, 0.000000000000e+00, 0.000000000000e+00, 7.070912000000e+02, 1.831104000000e+02, 0.000000000000e+00, 0.000000000000e+00, 0.000000000000e+00, 1.000000000000e+00, 0.000000000000e+00]</rosparam>
+            <rosparam param="pmat_r">[7.070912000000e+02, 0.000000000000e+00, 6.018873000000e+02, -3.798145000000e+02, 0.000000000000e+00, 7.070912000000e+02, 1.831104000000e+02, 0.000000000000e+00, 0.000000000000e+00, 0.000000000000e+00, 1.000000000000e+00, 0.000000000000e+00]</rosparam>
+        </node>
+    </group>
+
+    <group ns="$(arg ns)">
+        <node name="image_publisher" pkg="ros_utils" type="publish_images.py" output="screen" if="$(eval sequence_number == 10)" required="true">
+            <param name="rate" value="$(arg rate)"/>
+            <param name="fname_left" value="$(arg fname_left)"/>
+            <param name="fname_right" value="$(arg fname_right)"/>
+            <param name="fname_disp" value="" unless="$(arg disparity)"/>
+            <param name="fname_disp" value="$(arg fname_disp)" if="$(arg disparity)"/>
+            <param name="encoding" value="$(arg encoding)"/>
+            <rosparam param="pmat_l">[7.070912000000e+02, 0.000000000000e+00, 6.018873000000e+02, 0.000000000000e+00, 0.000000000000e+00, 7.070912000000e+02, 1.831104000000e+02, 0.000000000000e+00, 0.000000000000e+00, 0.000000000000e+00, 1.000000000000e+00, 0.000000000000e+00]</rosparam>
+            <rosparam param="pmat_r">[7.070912000000e+02, 0.000000000000e+00, 6.018873000000e+02, -3.798145000000e+02, 0.000000000000e+00, 7.070912000000e+02, 1.831104000000e+02, 0.000000000000e+00, 0.000000000000e+00, 0.000000000000e+00, 1.000000000000e+00, 0.000000000000e+00]</rosparam>
+        </node>
+    </group>
+<!--____________________________________________ end of public images node___________________________________-->
+    
+</launch>
